@@ -2,6 +2,7 @@ require('./config/config');
 const colors = require('colors');
 const express = require('express');
 const mongoose = require('mongoose');
+// Inicio de express
 const app = express();
 
 const bodyParser = require('body-parser');
@@ -12,7 +13,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-app.use(require('./routes/usuario'));
+// Configuracion global de rutas
+app.use(require('./routes/index'));
+
 
 mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useCreateIndex: true },
     (err, resp) => {

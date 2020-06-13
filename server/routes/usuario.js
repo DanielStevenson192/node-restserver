@@ -2,10 +2,17 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
 const Usuario = require('../models/usuario');
+const { verificToken, verificaAdminRole } = require('../middlewares/autenticacion');
 const app = express();
 
 // get de forma paginada
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificToken, (req, res) => {
+    /* return res.json({
+        usuario: req.usuario,
+        nombre: req.usuario.nombre,
+        email: req.usuario.email
+    }) */
+
     let desde = req.query.desde || 0;
     desde = Number(desde);
 
@@ -36,7 +43,7 @@ app.get('/usuario', function(req, res) {
 });
 
 // agregar un registro
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificToken, verificaAdminRole], function(req, res) {
     let body = req.body;
     // Definos el objeto
     let usuario = new Usuario({
@@ -66,7 +73,7 @@ app.post('/usuario', function(req, res) {
 });
 
 // actualizar un registro
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verificToken, verificaAdminRole], function(req, res) {
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre',
         'email',
@@ -92,7 +99,7 @@ app.put('/usuario/:id', function(req, res) {
     });
 });
 
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [verificToken, verificaAdminRole], function(req, res) {
     let id = req.params.id;
     //Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => { forma 1
     let cambiaEstado = {
